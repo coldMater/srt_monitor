@@ -1,12 +1,14 @@
 import notifier from 'node-notifier'
 import axios from 'axios'
 import parser from 'node-html-parser'
-import path from 'path'
 
 const url = "https://etk.srail.kr/hpg/hra/01/selectScheduleList.do?pageId=TK0101010000"
-const dptDt = '20220530'
-const dptTm = '060000'
-const formData = `stlbTrnClsfCd=05&trnGpCd=109&psgNum=1&seatAttCd=015&isRequest=Y&dptRsStnCd=0036&arvRsStnCd=0551&dptDt=${dptDt}&dptTm=${dptTm}&psgInfoPerPrnb1=1&psgInfoPerPrnb5=0`
+const dptDt = '20221029'
+const dptTm = '090000'
+const order = 0 // dptTm 의 시간의 {order}번째 출발시각 (가령 070000 시에 7:10 분 출발, 7:50분 출발 두 개가 있을 때)
+const dptRsStnCd = '0552' // 0036: 광주송정, 0551: 수서, 0552: 동탄
+const arvRsStnCd = '0036'
+const formData = `stlbTrnClsfCd=05&trnGpCd=109&psgNum=1&seatAttCd=015&isRequest=Y&dptRsStnCd=${dptRsStnCd}&arvRsStnCd=${arvRsStnCd}&dptDt=${dptDt}&dptTm=${dptTm}&psgInfoPerPrnb1=1&psgInfoPerPrnb5=0`
 
 async function main() {
     const result = await axios.post(url, formData, {
@@ -19,7 +21,7 @@ async function main() {
     const table = parsed.querySelector("#result-form")
     const mainInfo = table.getElementsByTagName('th')[0].text.trim()
     const tbody = table.getElementsByTagName('tbody')[0]
-    const trs = tbody.getElementsByTagName('tr')[1] // 시간 바꿀 때 여기 바꿔줘야함
+    const trs = tbody.getElementsByTagName('tr')[order]
     const tds = trs.getElementsByTagName('td')
     const from = tds[3].text.trim()
     const to = tds[4].text.trim()
@@ -30,10 +32,10 @@ async function main() {
     const seatReservationWaiting = tds[7].text.trim()
     console.log(`VIP: ${reservationButtonFirst }, GEN: ${reservationButtonStandard } | ${mainInfo} | ${from} -> ${to} | ${new Date().toISOString().slice(0, 19)}`)
     if (reservationButtonFirst === '예약하기') {
-        notifier.notify({ title: 'SRT Now Available', message: 'First Available', wait: false });
+        notifier.notify({ title: 'SRT Now Available', message: 'First Available', wait: false, sound: true });
     }
     if (reservationButtonStandard === '예약하기') {
-        notifier.notify({ title: 'SRT Now Available', message: 'Standard Available', wait: false });
+        notifier.notify({ title: 'SRT Now Available', message: 'Standard Available', wait: false, sound: true });
     }
 }
 
