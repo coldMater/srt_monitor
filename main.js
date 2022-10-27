@@ -39,6 +39,7 @@ async function main() {
     }
 }
 
+notifier.notify({ title: 'SRT monitor', message: 'SRT Monitor started!', wait: false, sound: true })
 setInterval(() => {
     main()
 }, 5000)
