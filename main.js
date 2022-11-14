@@ -3,11 +3,11 @@ import axios from 'axios'
 import parser from 'node-html-parser'
 
 const url = "https://etk.srail.kr/hpg/hra/01/selectScheduleList.do?pageId=TK0101010000"
-const dptDt = '20221029'
-const dptTm = '090000'
+const dptDt = '20221120'
+const dptTm = '140000'
 const order = 0 // dptTm 의 시간의 {order}번째 출발시각 (가령 070000 시에 7:10 분 출발, 7:50분 출발 두 개가 있을 때)
-const dptRsStnCd = '0552' // 0036: 광주송정, 0551: 수서, 0552: 동탄
-const arvRsStnCd = '0036'
+const dptRsStnCd = '0015' // 0036: 광주송정, 0551: 수서, 0552: 동탄, 0015: 대구
+const arvRsStnCd = '0552'
 const formData = `stlbTrnClsfCd=05&trnGpCd=109&psgNum=1&seatAttCd=015&isRequest=Y&dptRsStnCd=${dptRsStnCd}&arvRsStnCd=${arvRsStnCd}&dptDt=${dptDt}&dptTm=${dptTm}&psgInfoPerPrnb1=1&psgInfoPerPrnb5=0`
 
 async function main() {
