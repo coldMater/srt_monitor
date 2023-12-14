@@ -3,11 +3,11 @@ import axios from 'axios'
 import parser from 'node-html-parser'
 
 const url = "https://etk.srail.kr/hpg/hra/01/selectScheduleList.do?pageId=TK0101010000"
-const dptDt = '20221120'
-const dptTm = '140000'
+const dptDt = '20231215'
+const dptTm = '120000'
 const order = 0 // dptTm 의 시간의 {order}번째 출발시각 (가령 070000 시에 7:10 분 출발, 7:50분 출발 두 개가 있을 때)
-const dptRsStnCd = '0015' // 0036: 광주송정, 0551: 수서, 0552: 동탄, 0015: 대구
-const arvRsStnCd = '0552'
+const dptRsStnCd = '0551' // 0036: 광주송정, 0551: 수서, 0552: 동탄, 0015: 대구
+const arvRsStnCd = '0036'
 const formData = `stlbTrnClsfCd=05&trnGpCd=109&psgNum=1&seatAttCd=015&isRequest=Y&dptRsStnCd=${dptRsStnCd}&arvRsStnCd=${arvRsStnCd}&dptDt=${dptDt}&dptTm=${dptTm}&psgInfoPerPrnb1=1&psgInfoPerPrnb5=0`
 
 async function main() {
@@ -19,12 +19,12 @@ async function main() {
     })
     const parsed = parser.parse(result.data)
     const table = parsed.querySelector("#result-form")
-    const mainInfo = table.getElementsByTagName('th')[0].text.trim()
+    const mainInfo = table.getElementsByTagName('th')[0]?.text?.trim()
     const tbody = table.getElementsByTagName('tbody')[0]
     const trs = tbody.getElementsByTagName('tr')[order]
     const tds = trs.getElementsByTagName('td')
-    const from = tds[3].text.trim()
-    const to = tds[4].text.trim()
+    const from = tds[3].childNodes[1].text.trim() + tds[3].childNodes[3].text.trim()
+    const to = tds[4].childNodes[1].text.trim() + tds[4].childNodes[3].text.trim()
     const firstInfo = tds[5]
     const reservationButtonFirst = firstInfo.getElementsByTagName('a')[0]?.text?.trim()
     const standardInfo = tds[6]
@@ -40,6 +40,7 @@ async function main() {
 }
 
 notifier.notify({ title: 'SRT monitor', message: 'SRT Monitor started!', wait: false, sound: true })
+main()
 setInterval(() => {
     main()
 }, 5000)
